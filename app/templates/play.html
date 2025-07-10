@@ -1,0 +1,39 @@
+{% extends './base.html' %}
+
+{% block body %}
+<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+  <h1>{{ data.title }}</h1>
+  <form id="maze-form-get-result" method="POST" action="/result">
+    <div class="card shadow workspace">
+      <div class="card-body d-flex flex-column">
+        <h4 class="card-title text-center">Encuentra la salida del laberinto!</h4>
+        <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+          <div class="d-flex flex-column gap-1">
+            {% for row in data.load_cells %}
+              <div class="d-flex justify-content-center align-items-center gap-1">
+                {% for cell in row %}
+                  {% set classes = "border p-2 text-center" %}
+                  {% if cell.x == data.init_coords[0] and cell.y == data.init_coords[1] %}
+                    {% set classes = classes + " bg-dark text-white" %}
+                  {% elif cell.x == data.dest_coords[0] and cell.y == data.dest_coords[1] %}
+                    {% set classes = classes + " bg-warning text-dark" %}
+                  {% endif %}
+                  <div class="{{ classes }}" style="width: 40px; height: 40px; font-size: 14px;">
+                    {{ cell.number }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+          <input type="hidden" name="size_x" value="{{ data.size_x }}">
+          <input type="hidden" name="size_y" value="{{ data.size_y }}">
+          <input type="hidden" name="init_cell" value="{{ data.init_coords | join(' ') }}">
+          <input type="hidden" name="dest_cell" value="{{ data.dest_coords | join(' ') }}">
+          <textarea name="load_cells" style="display:none;">{{ data.load_cells | tojson }}</textarea>
+        </div>
+        <button type="submit" id="btn-get-result" class="btn btn-primary w-100 mt-3">Obtener resultado</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
